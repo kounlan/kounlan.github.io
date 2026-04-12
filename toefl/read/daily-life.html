@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOEFL Reading Practice (Paper Style)</title>
+  <style>
+    body { margin:0; font-family:"Georgia","Times New Roman",serif; background:#e6e2d9; }
+    .app { display:grid; grid-template-columns:1.2fr 1fr; height:100vh; gap:16px; padding:16px; }
+    .passage,.questions { background:#fbf8f2; padding:28px; overflow-y:auto; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08); border:1px solid #ddd6c9; }
+    .passage { line-height:1.7; font-size:16px; }
+    h3 { margin-top:0; font-weight:normal; border-bottom:1px solid #d6d1c4; padding-bottom:10px; }
+    .choices label { display:block; margin:12px 0; padding:8px 10px; border:1px solid #e0dbcf; border-radius:4px; background:#fffdf8; }
+    .correct { background:#dff5e1 !important; }
+    .wrong { background:#f8d7da !important; }
+    input[type="radio"] { margin-right:8px; }
+    .nav { margin-top:30px; display:flex; justify-content:space-between; }
+    button { padding:10px 18px; border-radius:4px; border:1px solid #aaa; background:#f4f1ea; cursor:pointer; }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="passage" id="passage"></div>
+  <div class="questions">
+    <h3 id="qTitle"></h3>
+    <div id="choices"></div>
+    <div class="nav">
+      <button onclick="prev()">Previous</button>
+      <button onclick="next()">Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const sections = [
+  {
+    passage: `<strong>Message from a Manager</strong><br><br>
+    Hi team,<br><br>
+    The meeting has been moved from Thursday to Friday at 10 AM due to a scheduling conflict.
+    Please review the project updates before the meeting so we can keep it short and focused.<br><br>
+    Also, submit your progress reports by Wednesday evening.`,
+    questions: [
+      { q:"1. Why was the meeting moved?", options:["A. The manager is busy","B. There is a scheduling conflict","C. The team requested it","D. The project is delayed"], answer:1, explain:"The passage explicitly states 'due to a scheduling conflict'." },
+      { q:"2. What should team members do before the meeting?", options:["A. Submit reports","B. Prepare a presentation","C. Review project updates","D. Meet individually"], answer:2, explain:"It says 'Please review the project updates before the meeting'." }
+    ]
+  },
+  {
+    passage:`<strong>Email from a Friend</strong><br><br>
+    I’m planning to visit Bangkok from June 10 to June 15. Maybe we can meet.`,
+    questions:[
+      { q:"3. Why is the friend contacting the reader?", options:["A. Ask advice","B. Invite to meet","C. Cancel trip","D. Discuss work"], answer:1, explain:"The friend suggests meeting together." },
+      { q:"4. How long will the stay be?", options:["A. 3 days","B. 4 days","C. 5 days","D. 6 days"], answer:2, explain:"June 10–15 is 5 days." }
+    ]
+  }
+];
+
+let secIndex=0, qIndex=0;
+const answers={};
+
+function render(){
+  const s=sections[secIndex];
+  const q=s.questions[qIndex];
+  passage.innerHTML=s.passage;
+  qTitle.innerText=q.q;
+  choices.innerHTML="";
+
+  q.options.forEach((opt,i)=>{
+    const key=`${secIndex}-${qIndex}`;
+    const checked=answers[key]===i?'checked':'';
+    choices.innerHTML+=`<label style="display:flex;gap:10px;align-items:center;">
+      <input type="radio" ${checked} onclick="select(${i})">
+      <span>${opt}</span>
+    </label>`;
+  });
+}
+
+function select(i){ answers[`${secIndex}-${qIndex}`]=i; }
+
+function next(){
+  if(qIndex<sections[secIndex].questions.length-1){ qIndex++; }
+  else if(secIndex<sections.length-1){ secIndex++; qIndex=0; }
+  else showResult();
+  render();
+}
+
+function prev(){
+  if(qIndex>0) qIndex--;
+  else if(secIndex>0){ secIndex--; qIndex=sections[secIndex].questions.length-1; }
+  render();
+}
+
+function showResult(){
+  let html=`<div style="padding:20px; font-family:Georgia;">
+  <h2>Review Mode</h2>`;
+
+  sections.forEach((s,sIdx)=>{
+    html+=`<h3>${s.passage}</h3>`;
+    s.questions.forEach((q,qIdx)=>{
+      const key=`${sIdx}-${qIdx}`;
+      const user=answers[key];
+      html+=`<p><strong>${q.q}</strong></p>`;
+      q.options.forEach((opt,i)=>{
+        let cls="";
+        if(i===q.answer) cls="correct";
+        if(i===user && i!==q.answer) cls="wrong";
+        html+=`<div class="${cls}" style="padding:6px;">${opt}</div>`;
+      });
+      html+=`<p><em>Explanation: ${q.explain}</em></p>`;
+    });
+  });
+
+  html+=`<button onclick="location.reload()">Retry</button></div>`;
+  document.getElementById('app').innerHTML=html;
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOEFL — Build a Sentence Practice</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── Theme: Dark (default) ── */
+    :root,
+    [data-theme="dark"] {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --surface2: #1e2230;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text: #eef0f6;
+      --text-muted: #6b7280;
+      --text-dim: #3d4455;
+      --accent: #6ee7b7;
+      --accent-dim: rgba(110, 231, 183, 0.12);
+      --accent-border: rgba(110, 231, 183, 0.3);
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.1);
+      --red-border: rgba(248, 113, 113, 0.3);
+      --yellow: #fbbf24;
+      --glow: rgba(110, 231, 183, 0.06);
+      --mono: 'Space Mono', monospace;
+      --sans: 'Sora', sans-serif;
+    }
+
+    /* ── Theme: Bright (clean white) ── */
+    [data-theme="bright"] {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --surface2: #eef1f6;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-hover: rgba(0, 0, 0, 0.18);
+      --text: #1a1d27;
+      --text-muted: #7a8099;
+      --text-dim: #b0b8cc;
+      --accent: #0ea5e9;
+      --accent-dim: rgba(14, 165, 233, 0.1);
+      --accent-border: rgba(14, 165, 233, 0.35);
+      --red: #ef4444;
+      --red-dim: rgba(239, 68, 68, 0.08);
+      --red-border: rgba(239, 68, 68, 0.3);
+      --yellow: #d97706;
+      --glow: rgba(14, 165, 233, 0.05);
+    }
+
+    /* ── Theme: Soft (warm pastel) ── */
+    [data-theme="soft"] {
+      --bg: #fdf6f0;
+      --surface: #fffaf6;
+      --surface2: #f5ede4;
+      --border: rgba(180, 130, 100, 0.12);
+      --border-hover: rgba(180, 130, 100, 0.25);
+      --text: #2d1f14;
+      --text-muted: #9b7b65;
+      --text-dim: #c8b4a4;
+      --accent: #d97706;
+      --accent-dim: rgba(217, 119, 6, 0.1);
+      --accent-border: rgba(217, 119, 6, 0.3);
+      --red: #dc2626;
+      --red-dim: rgba(220, 38, 38, 0.08);
+      --red-border: rgba(220, 38, 38, 0.28);
+      --yellow: #b45309;
+      --glow: rgba(217, 119, 6, 0.05);
+    }
+
+    /* ── Theme: Forest (muted green) ── */
+    [data-theme="forest"] {
+      --bg: #0f1a14;
+      --surface: #162019;
+      --surface2: #1e2d22;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --text: #e8f0eb;
+      --text-muted: #6b8a72;
+      --text-dim: #3a5040;
+      --accent: #4ade80;
+      --accent-dim: rgba(74, 222, 128, 0.12);
+      --accent-border: rgba(74, 222, 128, 0.3);
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.1);
+      --red-border: rgba(248, 113, 113, 0.28);
+      --yellow: #fbbf24;
+      --glow: rgba(74, 222, 128, 0.06);
+    }
+
+    /* Theme switcher UI */
+    .theme-switcher {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .theme-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .theme-dot:hover {
+      transform: scale(1.2);
+    }
+
+    .theme-dot.active {
+      border-color: var(--text);
+    }
+
+    .theme-dot[data-t="dark"] {
+      background: #0d0f14;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .theme-dot[data-t="bright"] {
+      background: #f5f7fa;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-dot[data-t="soft"] {
+      background: #fdf6f0;
+      box-shadow: 0 0 0 1px rgba(180, 130, 100, 0.3);
+    }
+
+    .theme-dot[data-t="forest"] {
+      background: #0f1a14;
+      box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.3);
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 4rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -30vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse at center, var(--glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      padding-top: 0.5rem;
+    }
+
+    .logo {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .stats {
+      display: flex;
+      gap: 6px;
+    }
+
+    .stat-pill {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-pill .val {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .stat-pill.streak-pill .val {
+      color: var(--yellow);
+    }
+
+    .title-block {
+      margin-bottom: 1.5rem;
+    }
+
+    .q-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .q-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .progress-track {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 1px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .prompt-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prompt-card::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 14px;
+      font-size: 80px;
+      line-height: 1;
+      color: var(--border);
+      font-family: Georgia, serif;
+      pointer-events: none;
+    }
+
+    .prompt-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .prompt-text {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    /* Answer drop zone */
+    .answer-zone {
+      background: var(--surface);
+      border: 1px dashed rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 1.25rem 1.25rem 1rem;
+      margin-bottom: 0.75rem;
+      min-height: 82px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .answer-zone.drag-over {
+      border-color: var(--accent-border);
+      background: rgba(110, 231, 183, 0.05);
+    }
+
+    .answer-zone.correct-zone {
+      border-color: var(--accent-border);
+      border-style: solid;
+      background: rgba(110, 231, 183, 0.04);
+    }
+
+    .answer-zone.wrong-zone {
+      border-color: var(--red-border);
+      border-style: solid;
+      background: rgba(248, 113, 113, 0.04);
+    }
+
+    .zone-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .chips-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 36px;
+      align-items: center;
+    }
+
+    .placeholder-text {
+      font-size: 14px;
+      color: var(--text-dim);
+      font-style: italic;
+      font-weight: 300;
+      pointer-events: none;
+    }
+
+    /* Drop caret */
+    .drop-caret {
+      width: 2px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 1px;
+      animation: caretBlink 0.6s infinite;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    @keyframes caretBlink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.15
+      }
+    }
+
+    /* Chips */
+    .chip {
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: grab;
+      transition: transform 0.12s, opacity 0.12s;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .chip:active {
+      cursor: grabbing;
+    }
+
+    .chip.bank-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .chip.bank-chip:not(.used):hover {
+      border-color: var(--border-hover);
+      background: var(--surface2);
+      filter: brightness(0.94);
+      transform: translateY(-2px);
+    }
+
+    .chip.bank-chip.used {
+      opacity: 0.18;
+      cursor: not-allowed;
+      pointer-events: none;
+      transform: none !important;
+    }
+
+    .chip.bank-chip.dragging {
+      opacity: 0.25;
+      transform: scale(0.95) !important;
+    }
+
+    .chip.answer-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .chip.answer-chip:not(.ok):not(.bad):hover {
+      border-color: var(--red-border);
+      color: var(--red);
+      background: var(--red-dim);
+    }
+
+    .chip.answer-chip.dragging {
+      opacity: 0.25;
+    }
+
+    .chip.answer-chip.ok {
+      background: var(--accent-dim);
+      border-color: var(--accent-border);
+      color: var(--accent);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .chip.answer-chip.bad {
+      background: var(--red-dim);
+      border-color: var(--red-border);
+      color: var(--red);
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* Floating drag ghost */
+    #drag-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-family: var(--mono);
+      font-size: 13px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      background: rgba(110, 231, 183, 0.15);
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transform: rotate(-2deg) scale(1.06);
+      white-space: nowrap;
+      display: none;
+    }
+
+    /* Word bank */
+    .word-bank-zone {
+      background: var(--surface);
+      border: 1px dashed rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      min-height: 62px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .word-bank-zone.drag-over {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .bank-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .bank-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .shuffle-btn {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .shuffle-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .shuffle-btn:active {
+      transform: scale(0.96);
+    }
+
+    .shuffle-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .shuffle-btn .ico {
+      transition: transform 0.35s ease;
+      display: inline-block;
+    }
+
+    .shuffle-btn:hover .ico {
+      transform: rotate(180deg);
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .hint-text {
+      font-size: 12px;
+      color: var(--text-dim);
+      text-align: center;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      padding: 10px 22px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0d0f14;
+      font-weight: 700;
+    }
+
+    .btn.primary:hover {
+      background: #86efac;
+      border-color: #86efac;
+    }
+
+    .btn.primary:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+      display: none;
+      animation: slideIn 0.2s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .feedback.correct-fb {
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      color: var(--accent);
+    }
+
+    .feedback.wrong-fb {
+      background: var(--red-dim);
+      border: 1px solid var(--red-border);
+      color: var(--red);
+    }
+
+    .feedback strong {
+      font-weight: 600;
+    }
+
+    .feedback .correct-sentence {
+      font-family: var(--mono);
+      font-size: 13px;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      color: var(--text);
+    }
+
+    .tip-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--yellow);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      display: none;
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-card strong {
+      color: var(--yellow);
+      font-weight: 500;
+    }
+
+    /* Completed */
+    .completed {
+      display: none;
+      text-align: center;
+      padding: 3rem 1rem;
+      animation: slideIn 0.3s ease;
+    }
+
+    .big-score {
+      font-family: var(--mono);
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .big-score.high {
+      color: var(--accent);
+    }
+
+    .big-score.mid {
+      color: var(--yellow);
+    }
+
+    .big-score.low {
+      color: var(--red);
+    }
+
+    .completed h2 {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .completed p {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    .final-stats {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .final-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 24px;
+      min-width: 100px;
+    }
+
+    .final-stat .v {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .final-stat .l {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .final-stat.c .v {
+      color: var(--accent);
+    }
+
+    .final-stat.w .v {
+      color: var(--red);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    /* Modal overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.72);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.18s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-hover);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      animation: slideUp 0.2s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      font-weight: 300;
+    }
+
+    .modal-close {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 10px;
+      font-size: 18px;
+      line-height: 1;
+      transition: all 0.15s;
+      font-family: var(--mono);
+    }
+
+    .modal-close:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .template-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .template-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .template-btn {
+      font-family: var(--mono);
+      font-size: 10px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+
+    .template-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .json-editor {
+      width: 100%;
+      min-height: 280px;
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--text);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .json-editor:focus {
+      border-color: var(--accent-border);
+    }
+
+    .json-editor.error {
+      border-color: var(--red-border);
+    }
+
+    .parse-error {
+      margin-top: 8px;
+      padding: 10px 14px;
+      background: var(--red-dim);
+      border: 1px solid var(--red-border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--red);
+      font-family: var(--mono);
+      display: none;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    .modal-footer .btn {
+      font-size: 12px;
+      padding: 9px 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="drag-ghost"></div>
+
+  <!-- Custom questions modal -->
+  <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Custom question set</div>
+          <div class="modal-sub">Paste or write your questions in JSON format below</div>
+        </div>
+        <button class="modal-close" onclick="closeCustomModal()">&#215;</button>
+      </div>
+
+      <div class="template-bar">
+        <div class="template-label">JSON editor</div>
+        <button class="template-btn" onclick="loadTemplate()">Load example</button>
+      </div>
+
+      <textarea class="json-editor" id="json-editor" spellcheck="false" placeholder='[
+  {
+    "prompt": "Context sentence shown to the student.",
+    "words": ["all", "the", "shuffled", "words", "go", "here"],
+    "answer": ["the", "correct", "word", "order", "goes", "here"],
+    "tip": "Grammar explanation shown when the answer is wrong."
+  }
+]'></textarea>
+
+      <div class="parse-error" id="parse-error"></div>
+
+      <div style="margin-top:10px;font-size:12px;color:var(--text-dim);line-height:1.6;">
+        Each question needs: <span style="color:var(--text-muted);">prompt</span> (context sentence) · <span
+          style="color:var(--text-muted);">words</span> (all available words, can include extras) · <span
+          style="color:var(--text-muted);">answer</span> (correct word order) · <span
+          style="color:var(--text-muted);">tip</span> (grammar note)
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" onclick="closeCustomModal()">Cancel</button>
+        <button class="btn primary" onclick="applyCustomQuestions()">Use these questions</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo">TOEFL <span>//</span> Build a Sentence</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="theme-switcher">
+          <!-- <div class="theme-dot" data-t="dark" title="Dark" onclick="setTheme('dark')"></div> -->
+          <!-- <div class="theme-dot active" data-t="bright" title="Bright" onclick="setTheme('bright')"></div> -->
+          <!-- <div class="theme-dot" data-t="soft" title="Soft" onclick="setTheme('soft')"></div> -->
+          <!-- <div class="theme-dot" data-t="forest" title="Forest" onclick="setTheme('forest')"></div> -->
+        </div>
+        <div class="stats">
+          <div class="stat-pill"><span>✓</span><span class="val" id="s-correct">0</span></div>
+          <div class="stat-pill"><span>✗</span><span class="val" id="s-wrong">0</span></div>
+          <div class="stat-pill streak-pill"><span>⚡</span><span class="val" id="s-streak">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz-area">
+      <div class="title-block">
+        <div class="q-label" id="q-label">Question 1 of 10</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-eyebrow">Context</div>
+        <div class="prompt-text" id="prompt-text">Loading...</div>
+      </div>
+
+      <div class="answer-zone" id="answer-zone">
+        <div class="zone-label">Your sentence — drag words here, or click to reorder</div>
+        <div class="chips-wrap" id="answer-chips">
+          <span class="placeholder-text">Drag words from below, or click to add...</span>
+        </div>
+      </div>
+
+      <div class="word-bank-zone" id="word-bank-zone">
+        <div class="bank-header">
+          <div class="bank-label">Word bank</div>
+          <div style="display:flex;gap:6px;">
+            <button class="shuffle-btn" onclick="openCustomModal()">
+              <span>&#43;</span> Custom
+            </button>
+            <button class="shuffle-btn" id="shuffle-btn" onclick="newQuestionSet()">
+              <span class="ico">&#8594;</span> New questions
+            </button>
+          </div>
+        </div>
+        <div class="word-bank" id="word-bank"></div>
+      </div>
+
+      <div class="hint-text">Drag to place · Drag within answer to reorder · Drag back to bank to remove · Click also
+        works</div>
+
+      <div class="btn-row">
+        <button class="btn primary" id="btn-check" onclick="checkAnswer()">Check</button>
+        <button class="btn" id="btn-clear" onclick="clearAnswer()">Clear all</button>
+        <button class="btn" id="btn-next" onclick="nextQuestion()" disabled>Next →</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+      <div class="tip-card" id="tip-card"></div>
+    </div>
+
+    <div class="completed" id="completed-area">
+      <div class="big-score" id="final-score">0%</div>
+      <h2 id="final-title">Session complete!</h2>
+      <p id="final-msg"></p>
+      <div class="final-stats">
+        <div class="final-stat c">
+          <div class="v" id="fc-correct">0</div>
+          <div class="l">Correct</div>
+        </div>
+        <div class="final-stat w">
+          <div class="v" id="fc-wrong">0</div>
+          <div class="l">Incorrect</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn primary" onclick="restart()">Practice again</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Theme switcher ── */
+    function setTheme(name) {
+      document.documentElement.setAttribute('data-theme', name);
+      document.querySelectorAll('.theme-dot').forEach(d => {
+        d.classList.toggle('active', d.dataset.t === name);
+      });
+      try { localStorage.setItem('toefl-theme', name); } catch (e) { }
+    }
+    (function () {
+      try {
+        const saved = localStorage.getItem('toefl-theme');
+        if (saved) setTheme(saved);
+      } catch (e) { }
+    })();
+
+    const allQuestions = [
+      { prompt: "A student is asking a classmate about the homework.", words: ["forgot", "I", "the", "did", "you", "assignment", "whether", "remember"], answer: ["I", "forgot", "whether", "you", "did", "the", "assignment"], tip: "Use 'whether' to introduce an indirect question. Word order: subject + verb + whether + clause." },
+      { prompt: "Two students are discussing a professor's lecture on climate change.", words: ["believe", "that", "the", "most", "scientists", "is", "warming", "global", "serious"], answer: ["most", "scientists", "believe", "that", "global", "warming", "is", "serious"], tip: "Quantifiers like 'most' come before the noun. Main clause: subject + verb + that + subordinate clause." },
+      { prompt: "A student is writing about library resources.", words: ["available", "online", "the", "resources", "all", "are", "students", "to"], answer: ["all", "the", "resources", "are", "available", "to", "students", "online"], tip: "Adjective phrases (like 'available to students') follow the noun predicatively after 'are'." },
+      { prompt: "A professor is explaining a policy on late assignments.", words: ["accepted", "will", "late", "be", "not", "unless", "submissions", "an", "you", "have", "extension"], answer: ["late", "submissions", "will", "not", "be", "accepted", "unless", "you", "have", "an", "extension"], tip: "'Unless' means 'except if.' Use it: main clause + unless + condition." },
+      { prompt: "Two students are talking about exam preparation.", words: ["studying", "recommend", "the", "I", "starting", "that", "you", "week", "before", "begin"], answer: ["I", "recommend", "that", "you", "begin", "studying", "the", "week", "before"], tip: "After 'recommend that,' use the base form of the verb (subjunctive mood)." },
+      { prompt: "A student is asking about campus facilities.", words: ["know", "gym", "open", "do", "how", "you", "is", "late", "the"], answer: ["do", "you", "know", "how", "late", "the", "gym", "is", "open"], tip: "Indirect questions use statement word order: 'do you know + how + subject + verb'." },
+      { prompt: "A professor is commenting on a student's essay.", words: ["argument", "stronger", "evidence", "more", "would", "be", "if", "the", "you", "included"], answer: ["the", "argument", "would", "be", "stronger", "if", "you", "included", "more", "evidence"], tip: "Conditionals (type 2): main clause = 'would + base verb'; 'if' clause = past tense." },
+      { prompt: "A student is explaining why they chose their major.", words: ["majoring", "decided", "psychology", "I", "because", "in", "fascinated", "by", "am", "human", "behavior"], answer: ["I", "decided", "majoring", "in", "psychology", "because", "I", "am", "fascinated", "by", "human", "behavior"], tip: "'Decided + gerund (verb-ing)' — use 'majoring'. 'Because' introduces the reason clause." },
+      { prompt: "Two students are comparing study methods before finals.", words: ["effective", "reviewing", "notes", "than", "more", "is", "re-reading", "the", "textbook"], answer: ["reviewing", "notes", "is", "more", "effective", "than", "re-reading", "the", "textbook"], tip: "Comparative: [noun phrase] + is + more + adjective + than + [noun phrase]." },
+      { prompt: "A student is responding to a discussion board question about technology.", words: ["argue", "that", "would", "access", "improved", "technology", "has", "I", "to", "education"], answer: ["I", "would", "argue", "that", "technology", "has", "improved", "access", "to", "education"], tip: "'I would argue that' is a strong academic opener. Follow with: subject + present perfect + object." },
+      { prompt: "A professor is giving instructions before an exam.", words: ["begin", "permitted", "not", "until", "you", "are", "to", "told"], answer: ["you", "are", "not", "permitted", "to", "begin", "until", "told"], tip: "Passive voice: subject + be + past participle. 'Until told' is a reduced adverb clause (until you are told)." },
+      { prompt: "A student is talking about a research paper deadline.", words: ["submit", "by", "must", "Friday", "the", "or", "you", "paper", "midnight", "will", "fail"], answer: ["you", "must", "submit", "the", "paper", "by", "Friday", "midnight", "or", "you", "will", "fail"], tip: "'Must' expresses obligation. The 'or' clause introduces a consequence: do X or Y will happen." },
+      { prompt: "Two students are debating environmental policies.", words: ["reducing", "emissions", "that", "carbon", "important", "it", "is", "extremely"], answer: ["it", "is", "extremely", "important", "that", "carbon", "emissions", "are", "reducing"], tip: "Extraposition: 'It is + adjective + that + clause' pushes the real subject to the end for emphasis." },
+      { prompt: "A student is asking a professor for an extension.", words: ["wondering", "whether", "I", "possible", "was", "an", "extension", "is", "it"], answer: ["I", "was", "wondering", "whether", "it", "is", "possible", "for", "an", "extension"], tip: "Indirect requests use past continuous + whether: 'I was wondering whether...' for polite tone." },
+      { prompt: "A professor is summarizing last week's discussion.", words: ["covered", "as", "discussed", "we", "last", "week", "the", "topic", "we"], answer: ["as", "we", "discussed", "last", "week", "we", "covered", "the", "topic"], tip: "'As we discussed' is a subordinate clause used to refer back to prior conversation. It precedes the main clause." },
+      { prompt: "A student is writing about the benefits of exercise.", words: ["shown", "that", "has", "regularly", "research", "exercising", "mood", "improves"], answer: ["research", "has", "shown", "that", "exercising", "regularly", "improves", "mood"], tip: "Present perfect 'has shown' links past research to current relevance. Gerund 'exercising' acts as the subject of the noun clause." },
+      { prompt: "Two classmates are discussing a group project.", words: ["divided", "we", "the", "should", "tasks", "equally", "among", "ourselves"], answer: ["we", "should", "divide", "the", "tasks", "equally", "among", "ourselves"], tip: "'Should + base verb' expresses recommendation. 'Ourselves' is a reflexive pronoun used when the subject and object are the same." },
+      { prompt: "A student is giving an opinion on social media.", words: ["spend", "people", "the", "that", "time", "I", "on", "believe", "too", "much", "social", "media"], answer: ["I", "believe", "that", "people", "spend", "too", "much", "time", "on", "social", "media"], tip: "'I believe that' introduces a noun clause stating an opinion. 'Too much' modifies uncountable nouns like 'time'." },
+      { prompt: "A professor is explaining academic integrity.", words: ["work", "submitting", "considered", "else's", "is", "someone", "plagiarism", "as"], answer: ["submitting", "someone", "else's", "work", "is", "considered", "as", "plagiarism"], tip: "Gerund phrase as subject: 'submitting someone else's work' is the subject. 'Considered as' = regarded as." },
+      { prompt: "A student is asking about the campus shuttle schedule.", words: ["often", "shuttle", "how", "does", "the", "run", "campus"], answer: ["how", "often", "does", "the", "campus", "shuttle", "run"], tip: "Direct questions invert subject and auxiliary: 'how often + does + subject + base verb'." }
+    ];
+
+    let questions = [];
+    let sessionCount = 0;
+
+    function pickNewSet() {
+      const pool = rnd([...allQuestions]);
+      questions = pool.slice(0, 10);
+      sessionCount++;
+    }
+
+    let current = 0, selected = [], bankWords = [], correct = 0, wrong = 0, streak = 0, checked = false;
+
+    /* ── Drag state ── */
+    let dragSrc = null;   // { zone: 'bank'|'answer', index }
+    let dragWord = '';
+    const ghost = document.getElementById('drag-ghost');
+
+    function rnd(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    /* ── Load ── */
+    function loadQuestion() {
+      checked = false; selected = [];
+      bankWords = rnd(questions[current].words);
+      document.getElementById('q-label').textContent = `Question ${current + 1} of ${questions.length}`;
+      document.getElementById('progress-fill').style.width = `${(current / questions.length) * 100}%`;
+      document.getElementById('prompt-text').textContent = questions[current].prompt;
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('tip-card').style.display = 'none';
+      document.getElementById('btn-next').disabled = true;
+      document.getElementById('btn-check').disabled = false;
+      document.getElementById('btn-clear').disabled = false;
+      document.getElementById('answer-zone').className = 'answer-zone';
+      renderAll();
+    }
+
+    function newQuestionSet() {
+      if (checked === false && selected.length > 0) {
+        if (!confirm('Start a new set of questions? Your current progress will be reset.')) return;
+      }
+      correct = 0; wrong = 0; streak = 0; current = 0;
+      ['s-correct', 's-wrong', 's-streak'].forEach(id => document.getElementById(id).textContent = 0);
+      pickNewSet();
+      const ico = document.querySelector('.shuffle-btn .ico');
+      ico.style.transition = 'transform 0.3s ease';
+      ico.style.transform = 'translateX(8px)';
+      setTimeout(() => { ico.style.transition = ''; ico.style.transform = ''; loadQuestion(); }, 300);
+    }
+
+    /* ── Render ── */
+    function renderAll() { renderAnswer(); renderBank(); }
+
+    function renderBank() {
+      const wb = document.getElementById('word-bank');
+      wb.innerHTML = '';
+      bankWords.forEach((word, i) => {
+        const isUsed = selected.some(s => s.bankIdx === i);
+        const c = document.createElement('div');
+        c.className = 'chip bank-chip' + (isUsed ? ' used' : '');
+        c.textContent = word;
+        c.dataset.zone = 'bank';
+        c.dataset.idx = i;
+        if (!isUsed) {
+          c.addEventListener('click', () => { if (!checked) clickAdd(word, i); });
+          makeDraggable(c, 'bank', i, word);
+        }
+        wb.appendChild(c);
+      });
+    }
+
+    function renderAnswer() {
+      const area = document.getElementById('answer-chips');
+      area.innerHTML = '';
+      if (selected.length === 0) {
+        area.innerHTML = '<span class="placeholder-text">Drag words from below, or click to add...</span>';
+        return;
+      }
+      selected.forEach((item, idx) => {
+        const c = document.createElement('div');
+        c.className = 'chip answer-chip';
+        c.textContent = item.word;
+        c.dataset.zone = 'answer';
+        c.dataset.idx = idx;
+        if (!checked) {
+          c.addEventListener('click', () => returnWord(idx));
+          makeDraggable(c, 'answer', idx, item.word);
+        }
+        area.appendChild(c);
+      });
+    }
+
+    /* ── Click interactions ── */
+    function clickAdd(word, bankIdx) {
+      selected.push({ word, bankIdx });
+      renderAll();
+    }
+
+    function returnWord(idx) {
+      selected.splice(idx, 1);
+      renderAll();
+    }
+
+    function clearAnswer() {
+      if (checked) return;
+      selected = [];
+      renderAll();
+    }
+
+    /* ── Drag & Drop ── */
+    function makeDraggable(el, zone, index, word) {
+      el.draggable = true;
+
+      el.addEventListener('dragstart', e => {
+        dragSrc = { zone, index };
+        dragWord = word;
+        setTimeout(() => el.classList.add('dragging'), 0);
+        e.dataTransfer.effectAllowed = 'move';
+        // Suppress browser ghost
+        const blank = new Image();
+        blank.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+        e.dataTransfer.setDragImage(blank, 0, 0);
+        ghost.textContent = word;
+        ghost.style.display = 'block';
+      });
+
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging');
+        ghost.style.display = 'none';
+        dragSrc = null; dragWord = '';
+        removeCaret();
+        document.querySelectorAll('.drag-over').forEach(z => z.classList.remove('drag-over'));
+      });
+    }
+
+    /* Move ghost with cursor */
+    document.addEventListener('dragover', e => {
+      if (ghost.style.display === 'none') return;
+      ghost.style.left = (e.clientX + 14) + 'px';
+      ghost.style.top = (e.clientY - 22) + 'px';
+    });
+
+    /* ── Answer zone drop target ── */
+    const answerZoneEl = document.getElementById('answer-zone');
+
+    answerZoneEl.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      answerZoneEl.classList.add('drag-over');
+      showCaret(e.clientX);
+    });
+
+    answerZoneEl.addEventListener('dragleave', e => {
+      if (!answerZoneEl.contains(e.relatedTarget)) {
+        answerZoneEl.classList.remove('drag-over');
+        removeCaret();
+      }
+    });
+
+    answerZoneEl.addEventListener('drop', e => {
+      e.preventDefault();
+      answerZoneEl.classList.remove('drag-over');
+      removeCaret();
+      if (!dragSrc || checked) return;
+
+      const insertAt = getInsertIdx(e.clientX);
+
+      if (dragSrc.zone === 'bank') {
+        selected.splice(insertAt, 0, { word: dragWord, bankIdx: dragSrc.index });
+      } else {
+        // reorder within answer
+        const fromIdx = dragSrc.index;
+        const moved = selected.splice(fromIdx, 1)[0];
+        let to = insertAt;
+        if (fromIdx < insertAt) to = Math.max(0, insertAt - 1);
+        selected.splice(to, 0, moved);
+      }
+      renderAll();
+    });
+
+    /* ── Bank zone drop target (return word) ── */
+    const bankZoneEl = document.getElementById('word-bank-zone');
+
+    bankZoneEl.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      bankZoneEl.classList.add('drag-over');
+    });
+
+    bankZoneEl.addEventListener('dragleave', e => {
+      if (!bankZoneEl.contains(e.relatedTarget)) bankZoneEl.classList.remove('drag-over');
+    });
+
+    bankZoneEl.addEventListener('drop', e => {
+      e.preventDefault();
+      bankZoneEl.classList.remove('drag-over');
+      if (!dragSrc || checked) return;
+      if (dragSrc.zone === 'answer') {
+        selected.splice(dragSrc.index, 1);
+        renderAll();
+      }
+    });
+
+    /* ── Caret helpers ── */
+    function getInsertIdx(mouseX) {
+      const chips = [...document.querySelectorAll('#answer-chips .chip.answer-chip')];
+      for (let i = 0; i < chips.length; i++) {
+        const r = chips[i].getBoundingClientRect();
+        if (mouseX < r.left + r.width / 2) return i;
+      }
+      return chips.length;
+    }
+
+    function showCaret(mouseX) {
+      removeCaret();
+      const area = document.getElementById('answer-chips');
+      const chips = [...area.querySelectorAll('.chip.answer-chip')];
+      const idx = getInsertIdx(mouseX);
+      const caret = document.createElement('div');
+      caret.className = 'drop-caret'; caret.id = 'drop-caret';
+      if (!chips.length || idx >= chips.length) area.appendChild(caret);
+      else area.insertBefore(caret, chips[idx]);
+    }
+
+    function removeCaret() {
+      const c = document.getElementById('drop-caret');
+      if (c) c.remove();
+    }
+
+    /* ── Check ── */
+    function checkAnswer() {
+      if (checked || selected.length === 0) return;
+      checked = true;
+      const q = questions[current];
+      const userSentence = selected.map(s => s.word);
+      const isCorrect = JSON.stringify(userSentence) === JSON.stringify(q.answer);
+
+      const area = document.getElementById('answer-chips');
+      area.innerHTML = '';
+      userSentence.forEach((word, i) => {
+        const c = document.createElement('div');
+        c.className = 'chip answer-chip ' + (word === q.answer[i] ? 'ok' : 'bad');
+        c.textContent = word;
+        area.appendChild(c);
+      });
+
+      document.querySelectorAll('.chip.bank-chip').forEach(c => {
+        c.style.opacity = '0.12'; c.style.pointerEvents = 'none';
+      });
+
+      answerZoneEl.className = 'answer-zone ' + (isCorrect ? 'correct-zone' : 'wrong-zone');
+
+      const fb = document.getElementById('feedback');
+      fb.style.display = 'block';
+      if (isCorrect) {
+        correct++; streak++;
+        fb.className = 'feedback correct-fb';
+        fb.innerHTML = '<strong>Correct!</strong> Excellent sentence structure.';
+      } else {
+        wrong++; streak = 0;
+        fb.className = 'feedback wrong-fb';
+        fb.innerHTML = `<strong>Not quite.</strong><div class="correct-sentence">${q.answer.join(' ')}</div>`;
+        const tip = document.getElementById('tip-card');
+        tip.style.display = 'block';
+        tip.innerHTML = `<strong>Grammar tip:</strong> ${q.tip}`;
+      }
+
+      document.getElementById('s-correct').textContent = correct;
+      document.getElementById('s-wrong').textContent = wrong;
+      document.getElementById('s-streak').textContent = streak;
+      document.getElementById('btn-check').disabled = true;
+      document.getElementById('btn-clear').disabled = true;
+      document.getElementById('btn-next').disabled = false;
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current >= questions.length) { showCompleted(); return; }
+      loadQuestion();
+    }
+
+    function showCompleted() {
+      document.getElementById('quiz-area').style.display = 'none';
+      document.getElementById('completed-area').style.display = 'block';
+      const pct = Math.round((correct / questions.length) * 100);
+      const scoreEl = document.getElementById('final-score');
+      scoreEl.textContent = pct + '%';
+      scoreEl.className = 'big-score ' + (pct >= 80 ? 'high' : pct >= 60 ? 'mid' : 'low');
+      document.getElementById('final-title').textContent = pct >= 80 ? 'Outstanding!' : pct >= 60 ? 'Good effort!' : 'Keep practicing!';
+      document.getElementById('final-msg').textContent = pct >= 80
+        ? "Your sentence structure is very strong. You're well prepared for the TOEFL."
+        : pct >= 60 ? 'Solid work. Review the grammar tips for the ones you missed.'
+          : 'Focus on word order, conditionals, and indirect questions. Keep at it!';
+      document.getElementById('fc-correct').textContent = correct;
+      document.getElementById('fc-wrong').textContent = wrong;
+    }
+
+    function restart() {
+      current = 0; correct = 0; wrong = 0; streak = 0;
+      ['s-correct', 's-wrong', 's-streak'].forEach(id => document.getElementById(id).textContent = 0);
+      pickNewSet();
+      document.getElementById('quiz-area').style.display = 'block';
+      document.getElementById('completed-area').style.display = 'none';
+      loadQuestion();
+    }
+
+    /* ── Custom questions modal ── */
+    const TEMPLATE = [
+      {
+        prompt: "A student is asking a classmate about the homework.",
+        words: ["forgot", "I", "the", "did", "you", "assignment", "whether", "remember"],
+        answer: ["I", "forgot", "whether", "you", "did", "the", "assignment"],
+        tip: "Use 'whether' to introduce an indirect question. Word order: subject + verb + whether + clause."
+      },
+      {
+        prompt: "Two students are discussing a professor's lecture on climate change.",
+        words: ["believe", "that", "the", "most", "scientists", "is", "warming", "global", "serious"],
+        answer: ["most", "scientists", "believe", "that", "global", "warming", "is", "serious"],
+        tip: "Quantifiers like 'most' come before the noun. Main clause: subject + verb + that + subordinate clause."
+      }
+    ];
+
+    function openCustomModal() {
+      document.getElementById('modal-overlay').classList.add('open');
+      document.getElementById('parse-error').style.display = 'none';
+      document.getElementById('json-editor').classList.remove('error');
+    }
+
+    function closeCustomModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('modal-overlay')) closeCustomModal();
+    }
+
+    function loadTemplate() {
+      document.getElementById('json-editor').value = JSON.stringify(TEMPLATE, null, 2);
+      document.getElementById('parse-error').style.display = 'none';
+      document.getElementById('json-editor').classList.remove('error');
+    }
+
+    function applyCustomQuestions() {
+      const raw = document.getElementById('json-editor').value.trim();
+      const errEl = document.getElementById('parse-error');
+      const editor = document.getElementById('json-editor');
+
+      if (!raw) {
+        showModalError('Please enter your questions in JSON format.');
+        return;
+      }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e) {
+        showModalError('Invalid JSON: ' + e.message);
+        return;
+      }
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        showModalError('Questions must be a non-empty JSON array [ ... ].');
+        return;
+      }
+
+      const issues = [];
+      parsed.forEach((q, i) => {
+        if (typeof q.prompt !== 'string' || !q.prompt.trim()) issues.push(`Question ${i + 1}: missing "prompt" string.`);
+        if (!Array.isArray(q.words) || q.words.length === 0) issues.push(`Question ${i + 1}: "words" must be a non-empty array.`);
+        if (!Array.isArray(q.answer) || q.answer.length === 0) issues.push(`Question ${i + 1}: "answer" must be a non-empty array.`);
+        if (typeof q.tip !== 'string') issues.push(`Question ${i + 1}: missing "tip" string.`);
+      });
+
+      if (issues.length > 0) {
+        showModalError(issues.join('<br>'));
+        return;
+      }
+
+      // All good — load as custom set
+      allQuestions.splice(0, allQuestions.length, ...parsed);
+      closeCustomModal();
+      correct = 0; wrong = 0; streak = 0; current = 0;
+      ['s-correct', 's-wrong', 's-streak'].forEach(id => document.getElementById(id).textContent = 0);
+      pickNewSet();
+      loadQuestion();
+    }
+
+    function showModalError(msg) {
+      const errEl = document.getElementById('parse-error');
+      errEl.innerHTML = msg;
+      errEl.style.display = 'block';
+      document.getElementById('json-editor').classList.add('error');
+    }
+
+    pickNewSet();
+    loadQuestion();
+  </script>
+</body>
+
+</html>
